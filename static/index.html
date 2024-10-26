@@ -89,18 +89,17 @@
         </div>
 
         <div class="col-10 col-sm-9">
-          <iframe
-            src="http://a2211a6eacec.ngrok.app/mjpeg"
+          <img
+            src="https://a2211a6eacec.ngrok.app/mjpeg"
             width="990"
             height="790"
-          >
-          </iframe>
+          />
         </div>
       </div>
     </div>
 
     <script>
-      baseUrl = "http://192.168.18.109:8080/api";
+      baseUrl = window.location.href;
 
       const refreshTempHumiHeat = () => {
         let temperatureSpan = document.getElementById("temperature");
