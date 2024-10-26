@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 
 	"github.com/stianeikeland/go-rpio/v4"
 	"github.com/victorpigmeo/greenhouse/models"
@@ -100,7 +101,7 @@ func readDht(w http.ResponseWriter, r *http.Request) {
 }
 
 func gpio(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/api/gpio" {
+	if !strings.Contains(r.URL.Path, "/api/gpio/") {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
