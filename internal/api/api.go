@@ -6,8 +6,8 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"os/exec"
 
-	"github.com/d2r2/go-dht"
 	"github.com/victorpigmeo/greenhouse/models"
 )
 
@@ -32,6 +32,11 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func auth(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/api/auth" {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	slog.Info(fmt.Sprintf(`%s %s`, r.Method, string(r.URL.Path)))
 
 	file, err := os.Open("./config.json")
@@ -70,15 +75,20 @@ func auth(w http.ResponseWriter, r *http.Request) {
 }
 
 func read_dht(w http.ResponseWriter, r *http.Request) {
-	temperature, humidity, _, err := dht.ReadDHTxxWithRetry(dht.DHT11, 23, false, 10)
-
-	if err != nil {
-		slog.Error("Error reading DHT11")
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Error reading DHT11"))
+	if r.URL.Path != "/api/dht" {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	slog.Info(fmt.Sprintf("%f | %f", temperature, humidity))
+	dhtOutput, err := exec.Command("python3", "dht11-raspberry-pi.py").Output()
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error fetching DHT data"))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(dhtOutput))
 
 }
