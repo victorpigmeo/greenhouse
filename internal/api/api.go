@@ -70,7 +70,7 @@ func auth(w http.ResponseWriter, r *http.Request) {
 }
 
 func read_dht(w http.ResponseWriter, r *http.Request) {
-	temperature, humidity, _, err := dht.ReadDHTxxWithRetry(dht.DHT11, 17, false, 10)
+	temperature, humidity, _, err := dht.ReadDHTxxWithRetry(dht.DHT11, 23, false, 10)
 
 	if err != nil {
 		slog.Error("Error reading DHT11")
