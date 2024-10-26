@@ -88,6 +88,7 @@ func readDht(w http.ResponseWriter, r *http.Request) {
 	dhtOutput, err := exec.Command("python3", "dht11-raspberry-pi.py").Output()
 
 	if err != nil {
+		slog.Error(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(dhtOutput))
 		return
@@ -107,6 +108,7 @@ func gpio(w http.ResponseWriter, r *http.Request) {
 	pin, err := strconv.ParseUint(r.PathValue("pin"), 10, 8)
 
 	if err != nil {
+		slog.Error(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log/slog"
 
 	"github.com/stianeikeland/go-rpio/v4"
@@ -12,7 +11,8 @@ func main() {
 	slog.Info("Setting up GPIO Pins...")
 	rpio.Open()
 	rpio.Pin(24).Output()
+	rpio.Pin(22).Output()
 
-	fmt.Println("Starting API...")
+	slog.Info("Starting API...")
 	api.Run()
 }
