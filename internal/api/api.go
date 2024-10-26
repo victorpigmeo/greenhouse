@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/stianeikeland/go-rpio/v4"
 	"github.com/victorpigmeo/greenhouse/models"
 )
 
@@ -15,7 +16,8 @@ func Run() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /", index)
 	mux.HandleFunc("POST /api/auth", auth)
-	mux.HandleFunc("GET /api/dht", read_dht)
+	mux.HandleFunc("GET /api/dht", readDht)
+	mux.HandleFunc("PUT /api/gpio", gpio)
 
 	http.ListenAndServe(":8080", mux)
 }
@@ -74,7 +76,7 @@ func auth(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func read_dht(w http.ResponseWriter, r *http.Request) {
+func readDht(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/api/dht" {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -92,5 +94,15 @@ func read_dht(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(dhtOutput))
+
+}
+
+func gpio(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/api/peripheral" {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	rpio.Pin(24).Toggle()
 
 }
