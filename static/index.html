@@ -1,0 +1,261 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Estufa dahora</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <!-- Place favicon.ico in the root directory -->
+  </head>
+  <body>
+    <!--[if lt IE 8]>
+      <p class="browserupgrade">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="http://browsehappy.com/">upgrade your browser</a> to improve
+        your experience.
+      </p>
+    <![endif]-->
+
+    <div class="container">
+      <div class="row">
+        <h1>Estufa da alegria</h1>
+      </div>
+
+      <div class="row mt-2 mb-2">
+        <div></div>
+      </div>
+
+      <div class="row mt-2 mb-2">
+        <div class="col-2 col-sm-3 align-self-start">
+          <div class="row">
+            <h6>Password</h6>
+
+            <div class="input-group mb-3">
+              <input
+                id="password-input"
+                type="password"
+                class="form-control"
+                placeholder="Password"
+              />
+              <button
+                class="btn btn-success"
+                onclick="auth('unlock')"
+                id="password-submit"
+              >
+                <i class="bi-lock"></i>
+              </button>
+            </div>
+          </div>
+
+          <hr />
+
+          <div class="column mt-1 mb-1">
+            <h6>Telemetry</h6>
+            <p class="mb-1">
+              Temperature:
+              <span class="text-success" id="temperature">00.00</span> °C
+            </p>
+            <p class="mb-1">
+              Humidity: <span class="text-danger" id="humidity">00.00</span>%
+            </p>
+            <p class="mb-1">
+              Heat index: <span id="heat-index">00.00</span> °C
+            </p>
+          </div>
+
+          <hr />
+
+          <div class="column mt-1 mb-1">
+            <!-- TODO Fix stream, RPi? -->
+            <h6>Camera control</h6>
+            <button class="btn btn-success btn-disabled">
+              <i class="bi-camera"></i>
+            </button>
+
+            <button class="btn btn-danger">
+              <i class="bi-camera"></i>
+            </button>
+          </div>
+
+          <div class="cloumn">
+            <button class="btn btn-success" onclick="setGpio('digital', 4, 1)">
+              <i class="bi-lightning"></i>
+            </button>
+
+            <button class="btn btn-danger" onclick="setGpio('digital', 4, 0)">
+              <i class="bi-lightning"></i>
+            </button>
+          </div>
+
+          <hr />
+
+          <div class="column">
+            <h6>LED Grow control</h6>
+            <button class="btn btn-success" onclick="setGpio('digital',12, 1)">
+              <i class="bi-sunrise"></i>
+            </button>
+            <button class="btn btn-danger" onclick="setGpio('digital',12, 0)">
+              <i class="bi-sunrise"></i>
+            </button>
+          </div>
+
+          <hr />
+
+          <div class="column mt-1 mb-1">
+            <h6>Internal FAN</h6>
+            <button class="btn btn-success" onclick="setGpio('digital',12, 1)">
+              <i class="bi-wind"></i>
+            </button>
+            <button class="btn btn-danger" onclick="setGpio('digital', 12, 0)">
+              <i class="bi-wind"></i>
+            </button>
+          </div>
+
+          <div class="column">
+            <h6>External FAN/Exaust</h6>
+            <button class="btn btn-success" onclick="setGpio('digital', 12, 1)">
+              <i class="bi-fan"></i>
+            </button>
+            <button class="btn btn-danger" onclick="setGpio('digital', 12, 0)">
+              <i class="bi-fan"></i>
+            </button>
+          </div>
+
+          <hr />
+
+          <div class="column">
+            <h6>Settings</h6>
+            <button class="btn btn-warning" onclick="settings('restart')">
+              <i class="bi bi-bootstrap-reboot"></i>
+            </button>
+          </div>
+
+          <hr />
+
+          <div class="column">
+            <h6>Water</h6>
+          </div>
+        </div>
+
+        <div class="col-10 col-sm-9">
+          <img
+            style="width: 100%"
+            src="http://localhost:56000/mjpeg"
+            id="stream"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      baseUrl = "localhost:8080";
+
+      const settings = (action) => {
+        fetch(baseUrl + "api/settings/" + action + "/").then((response) => {});
+      };
+
+      const auth = (action) => {
+        let password = document.getElementById("password-input");
+        let submitButton = document.getElementById("password-submit");
+
+        fetch(baseUrl + "api/auth/" + action + "/" + password.value)
+          .then((response) => response.json())
+          .then((response) => {
+            if (response.unlocked == true) {
+              submitButton.className = "btn btn-danger";
+              submitButton.setAttribute("onclick", "auth('lock')");
+            } else {
+              password.value = "";
+              submitButton.className = "btn btn-success";
+              submitButton.setAttribute("onclick", "auth('unlock')");
+            }
+          })
+          .catch((error) => {
+            password.value = "";
+            submitButton.className = "btn btn-success";
+            submitButton.setAttribute("onclick", "auth('unlock')");
+          });
+      };
+
+      const setGpio = (action, pin, value) => {
+        fetch(baseUrl + "api/gpio/" + action + "/" + pin + "/" + value)
+          .then((response) => {
+            console.log(response.json());
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      };
+
+      const startStream = () => {
+        fetch(baseUrl + "api/stream/on")
+          .then((response) => {
+            location.reload();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      };
+
+      const stopStream = () => {
+        fetch(baseUrl + "api/stream/off")
+          .then((response) => {
+            location.reload();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      };
+
+      const refreshTempHumiHeat = () => {
+        let temperatureSpan = document.getElementById("temperature");
+        let humiditySpan = document.getElementById("humidity");
+        let heatIndexSpan = document.getElementById("heat-index");
+
+        fetch(baseUrl + "api/dht")
+          .then((response) => response.json())
+          .then((response) => {
+            let temperature = response.temperature;
+            let humidity = response.humidity;
+            let heatIndex = response.heat_index;
+
+            temperatureSpan.innerHTML = temperature;
+            humiditySpan.innerHTML = humidity;
+            heatIndexSpan.innerHTML = heatIndex;
+
+            if (temperature > 20 || temperature < 28) {
+              temperatureSpan.className = "text-success";
+            } else {
+              temperatureSpan.className = "text-danger";
+            }
+
+            if (humidity > 40 || humidity < 70) {
+              humiditySpan.className = "text-success";
+            } else {
+              humiditySpan.className = "text-danger";
+            }
+          })
+          .catch((error) => {
+            temperatureSpan.innerHTML = "ERROR TO FETCH!";
+            humiditySpan.innerHTML = "ERROR TO FETCH!";
+            heatIndexSpan.innerHTML = "ERROR TO FETCH!";
+          });
+      };
+
+      setInterval(refreshTempHumiHeat, 10000);
+    </script>
+  </body>
+</html>
