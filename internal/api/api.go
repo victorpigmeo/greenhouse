@@ -7,11 +7,28 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"slices"
 	"strconv"
 
 	"github.com/stianeikeland/go-rpio/v4"
 	"github.com/victorpigmeo/greenhouse/models"
 )
+
+var originAllowlist = []string{
+	"http://127.0.0.1:8080",
+	"http://localhost:8080",
+}
+
+func checkCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		origin := r.Header.Get("Origin")
+		if slices.Contains(originAllowlist, origin) {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Add("Vary", "Origin")
+		}
+		next.ServeHTTP(w, r)
+	})
+}
 
 func Run() {
 	mux := http.NewServeMux()
@@ -20,7 +37,7 @@ func Run() {
 	mux.HandleFunc("GET /api/dht", readDht)
 	mux.HandleFunc("PUT /api/gpio/{pin}", gpio)
 
-	http.ListenAndServe(":8080", mux)
+	http.ListenAndServe(":8080", checkCORS(mux))
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
