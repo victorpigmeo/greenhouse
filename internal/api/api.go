@@ -3,10 +3,10 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 
@@ -86,17 +86,22 @@ func readDht(w http.ResponseWriter, r *http.Request) {
 
 	slog.Info(fmt.Sprintf(`%s %s`, r.Method, string(r.URL.Path)))
 
-	dhtOutput, err := exec.Command("python3", "dht11-raspberry-pi.py").Output()
+	res, err := http.Get("http://192.168.18.26:8080/api/dht")
+
+	// dhtOutput, err := exec.Command("python3", "dht11-raspberry-pi.py").Output()
 
 	if err != nil {
 		slog.Error(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(dhtOutput))
+		w.Write([]byte(err.Error()))
+		// w.Write([]byte(dhtOutput))
 		return
 	}
 
+	resBody, err := io.ReadAll(res.Body)
+
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(dhtOutput))
+	w.Write([]byte(resBody))
 
 }
 
