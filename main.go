@@ -10,6 +10,7 @@ import (
 
 func main() {
 	slog.Info("Setting up GPIO Pins...")
+	rpio.Open()
 	rpio.Pin(24).Output()
 
 	fmt.Println("Starting API...")

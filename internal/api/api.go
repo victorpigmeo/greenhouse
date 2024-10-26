@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strconv"
 
 	"github.com/stianeikeland/go-rpio/v4"
 	"github.com/victorpigmeo/greenhouse/models"
@@ -17,7 +18,7 @@ func Run() {
 	mux.HandleFunc("GET /", index)
 	mux.HandleFunc("POST /api/auth", auth)
 	mux.HandleFunc("GET /api/dht", readDht)
-	mux.HandleFunc("PUT /api/gpio", gpio)
+	mux.HandleFunc("PUT /api/gpio/{pin}", gpio)
 
 	http.ListenAndServe(":8080", mux)
 }
@@ -98,11 +99,18 @@ func readDht(w http.ResponseWriter, r *http.Request) {
 }
 
 func gpio(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/api/peripheral" {
+	if r.URL.Path != "/api/gpio" {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	rpio.Pin(24).Toggle()
+	pin, err := strconv.ParseUint(r.PathValue("pin"), 10, 8)
 
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	rpio.Pin(pin).Toggle()
 }
