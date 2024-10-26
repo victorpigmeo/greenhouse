@@ -44,19 +44,17 @@
             <h6>Password</h6>
 
             <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">
+                  <i class="bi-person-fill-lock"></i>
+                </span>
+              </div>
+
               <input
-                id="password-input"
                 type="password"
                 class="form-control"
                 placeholder="Password"
               />
-              <button
-                class="btn btn-success"
-                onclick="auth('unlock')"
-                id="password-submit"
-              >
-                <i class="bi-lock"></i>
-              </button>
             </div>
           </div>
 
@@ -71,82 +69,22 @@
             <p class="mb-1">
               Humidity: <span class="text-danger" id="humidity">00.00</span>%
             </p>
-            <p class="mb-1">
-              Heat index: <span id="heat-index">00.00</span> °C
-            </p>
           </div>
 
           <hr />
 
           <div class="column mt-1 mb-1">
             <!-- TODO Fix stream, RPi? -->
-            <h6>Camera control</h6>
-            <button class="btn btn-success btn-disabled">
+            <h6>Controls</h6>
+            <button class="btn btn-success" onclick="stream('start')">
               <i class="bi-camera"></i>
             </button>
-
-            <button class="btn btn-danger">
-              <i class="bi-camera"></i>
-            </button>
-          </div>
-
-          <div class="cloumn">
-            <button class="btn btn-success" onclick="setGpio('digital', 4, 1)">
-              <i class="bi-lightning"></i>
-            </button>
-
-            <button class="btn btn-danger" onclick="setGpio('digital', 4, 0)">
-              <i class="bi-lightning"></i>
-            </button>
-          </div>
-
-          <hr />
-
-          <div class="column">
-            <h6>LED Grow control</h6>
-            <button class="btn btn-success" onclick="setGpio('digital',12, 1)">
+            <button class="btn btn-success" onclick="gpio(24)">
               <i class="bi-sunrise"></i>
             </button>
-            <button class="btn btn-danger" onclick="setGpio('digital',12, 0)">
-              <i class="bi-sunrise"></i>
+            <button class="btn btn-success" onclick="gpio(22)">
+              <i class="bi-droplet-half"></i>
             </button>
-          </div>
-
-          <hr />
-
-          <div class="column mt-1 mb-1">
-            <h6>Internal FAN</h6>
-            <button class="btn btn-success" onclick="setGpio('digital',12, 1)">
-              <i class="bi-wind"></i>
-            </button>
-            <button class="btn btn-danger" onclick="setGpio('digital', 12, 0)">
-              <i class="bi-wind"></i>
-            </button>
-          </div>
-
-          <div class="column">
-            <h6>External FAN/Exaust</h6>
-            <button class="btn btn-success" onclick="setGpio('digital', 12, 1)">
-              <i class="bi-fan"></i>
-            </button>
-            <button class="btn btn-danger" onclick="setGpio('digital', 12, 0)">
-              <i class="bi-fan"></i>
-            </button>
-          </div>
-
-          <hr />
-
-          <div class="column">
-            <h6>Settings</h6>
-            <button class="btn btn-warning" onclick="settings('restart')">
-              <i class="bi bi-bootstrap-reboot"></i>
-            </button>
-          </div>
-
-          <hr />
-
-          <div class="column">
-            <h6>Water</h6>
           </div>
         </div>
 
@@ -164,78 +102,18 @@
     <script>
       baseUrl = "localhost:8080";
 
-      const settings = (action) => {
-        fetch(baseUrl + "api/settings/" + action + "/").then((response) => {});
-      };
-
-      const auth = (action) => {
-        let password = document.getElementById("password-input");
-        let submitButton = document.getElementById("password-submit");
-
-        fetch(baseUrl + "api/auth/" + action + "/" + password.value)
-          .then((response) => response.json())
-          .then((response) => {
-            if (response.unlocked == true) {
-              submitButton.className = "btn btn-danger";
-              submitButton.setAttribute("onclick", "auth('lock')");
-            } else {
-              password.value = "";
-              submitButton.className = "btn btn-success";
-              submitButton.setAttribute("onclick", "auth('unlock')");
-            }
-          })
-          .catch((error) => {
-            password.value = "";
-            submitButton.className = "btn btn-success";
-            submitButton.setAttribute("onclick", "auth('unlock')");
-          });
-      };
-
-      const setGpio = (action, pin, value) => {
-        fetch(baseUrl + "api/gpio/" + action + "/" + pin + "/" + value)
-          .then((response) => {
-            console.log(response.json());
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      };
-
-      const startStream = () => {
-        fetch(baseUrl + "api/stream/on")
-          .then((response) => {
-            location.reload();
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      };
-
-      const stopStream = () => {
-        fetch(baseUrl + "api/stream/off")
-          .then((response) => {
-            location.reload();
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      };
-
       const refreshTempHumiHeat = () => {
         let temperatureSpan = document.getElementById("temperature");
         let humiditySpan = document.getElementById("humidity");
-        let heatIndexSpan = document.getElementById("heat-index");
 
         fetch(baseUrl + "api/dht")
           .then((response) => response.json())
           .then((response) => {
             let temperature = response.temperature;
             let humidity = response.humidity;
-            let heatIndex = response.heat_index;
 
             temperatureSpan.innerHTML = temperature;
             humiditySpan.innerHTML = humidity;
-            heatIndexSpan.innerHTML = heatIndex;
 
             if (temperature > 20 || temperature < 28) {
               temperatureSpan.className = "text-success";
@@ -252,7 +130,6 @@
           .catch((error) => {
             temperatureSpan.innerHTML = "ERROR TO FETCH!";
             humiditySpan.innerHTML = "ERROR TO FETCH!";
-            heatIndexSpan.innerHTML = "ERROR TO FETCH!";
           });
       };
 

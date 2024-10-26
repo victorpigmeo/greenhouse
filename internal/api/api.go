@@ -85,7 +85,7 @@ func readDht(w http.ResponseWriter, r *http.Request) {
 
 	slog.Info(fmt.Sprintf(`%s %s`, r.Method, string(r.URL.Path)))
 
-	dhtOutput, err := exec.Command("python3", "/home/victor/dht11-raspberry-pi.py").Output()
+	dhtOutput, err := exec.Command("python3", "dht11-raspberry-pi.py").Output()
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
