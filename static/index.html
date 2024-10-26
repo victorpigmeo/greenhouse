@@ -100,13 +100,13 @@
     </div>
 
     <script>
-      baseUrl = "http://localhost:8080/";
+      baseUrl = "http://192.168.18.109:8080/api";
 
       const refreshTempHumiHeat = () => {
         let temperatureSpan = document.getElementById("temperature");
         let humiditySpan = document.getElementById("humidity");
 
-        fetch(baseUrl + "api/dht")
+        fetch(baseUrl + "/dht")
           .then((response) => response.json())
           .then((response) => {
             let temperature = response.temperature;
@@ -133,7 +133,7 @@
           });
       };
 
-      setInterval(refreshTempHumiHeat, 10000);
+      setInterval(refreshTempHumiHeat, 5000);
     </script>
   </body>
 </html>
