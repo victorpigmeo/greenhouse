@@ -19,7 +19,7 @@ func Run() {
 	mux.HandleFunc("GET /", index)
 	mux.HandleFunc("POST /api/auth", auth)
 	mux.HandleFunc("GET /api/dht", readDht)
-	mux.HandleFunc("PUT /api/gpio/{pin}", gpio)
+	mux.HandleFunc("PUT /api/gpio/{action}/{pin}", gpio)
 
 	http.ListenAndServe(":8080", mux)
 }
@@ -108,6 +108,7 @@ func gpio(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	action := r.PathValue("action")
 	pin, err := strconv.ParseUint(r.PathValue("pin"), 10, 8)
 
 	if err != nil {
@@ -117,5 +118,19 @@ func gpio(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rpio.Pin(pin).Toggle()
+	res, err := http.Get(fmt.Sprintf("http://192.168.18.26:8080/api/gpio/%s/%d", action, pin))
+
+	if err != nil {
+		slog.Error(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	resBody, err := io.ReadAll(res.Body)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(resBody))
+
+	// rpio.Pin(pin).Toggle()
 }
