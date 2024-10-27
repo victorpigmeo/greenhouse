@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/stianeikeland/go-rpio/v4"
 	"github.com/victorpigmeo/greenhouse/models"
 )
 
