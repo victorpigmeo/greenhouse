@@ -104,54 +104,54 @@
     </div>
 
     <script>
-       baseUrl = window.location.href + "/api";
+      baseUrl = window.location.href + "/api";
 
       const gpio = (action, pin) => {
         fetch(baseUrl + "/gpio/" + action + "/" + pin)
-        .then((response) => response.json())
-        .then((response) => {
-          console.log(response);
-        })
-        .catch(error){
-          console.log(error);
-        }
-      }
+          .then((response) => response.json())
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      };
 
-       const refreshTempHumiHeat = () => {
-         let temperatureSpan = document.getElementById("temperature");
-         let humiditySpan = document.getElementById("humidity");
-         let heatIndexSpan = document.getElementById("heat-index");
+      const refreshTempHumiHeat = () => {
+        let temperatureSpan = document.getElementById("temperature");
+        let humiditySpan = document.getElementById("humidity");
+        let heatIndexSpan = document.getElementById("heat-index");
 
-         fetch(baseUrl + "/dht")
-           .then((response) => response.json())
-           .then((response) => {
-             let temperature = response.temperature;
-             let humidity = response.humidity;
-             let heatIndex = response.heat_index;
+        fetch(baseUrl + "/dht")
+          .then((response) => response.json())
+          .then((response) => {
+            let temperature = response.temperature;
+            let humidity = response.humidity;
+            let heatIndex = response.heat_index;
 
-             temperatureSpan.innerHTML = temperature;
-             humiditySpan.innerHTML = humidity;
-             heatIndexSpan.innerHTML = heatIndex;
+            temperatureSpan.innerHTML = temperature;
+            humiditySpan.innerHTML = humidity;
+            heatIndexSpan.innerHTML = heatIndex;
 
-             if (temperature > 20 || temperature < 28) {
-               temperatureSpan.className = "text-success";
-             } else {
-               temperatureSpan.className = "text-danger";
-             }
+            if (temperature > 20 || temperature < 28) {
+              temperatureSpan.className = "text-success";
+            } else {
+              temperatureSpan.className = "text-danger";
+            }
 
-             if (humidity > 40 || humidity < 70) {
-               humiditySpan.className = "text-success";
-             } else {
-               humiditySpan.className = "text-danger";
-             }
-           })
-           .catch((error) => {
-             temperatureSpan.innerHTML = "ERROR TO FETCH!";
-             humiditySpan.innerHTML = "ERROR TO FETCH!";
-           });
-       };
+            if (humidity > 40 || humidity < 70) {
+              humiditySpan.className = "text-success";
+            } else {
+              humiditySpan.className = "text-danger";
+            }
+          })
+          .catch((error) => {
+            temperatureSpan.innerHTML = "ERROR TO FETCH!";
+            humiditySpan.innerHTML = "ERROR TO FETCH!";
+          });
+      };
 
-       setInterval(refreshTempHumiHeat, 10000);
+      setInterval(refreshTempHumiHeat, 10000);
     </script>
   </body>
 </html>
