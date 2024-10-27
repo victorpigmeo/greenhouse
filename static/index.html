@@ -71,6 +71,10 @@
             <p class="mb-1">
               Humidity: <span class="text-danger" id="humidity">00.00</span>%
             </p>
+            <p class="mb-1">
+              Heat Index:
+              <span class="text" id="heat-index">00.00</span> °C
+            </p>
           </div>
 
           <hr />
@@ -102,15 +106,18 @@
       const refreshTempHumiHeat = () => {
         let temperatureSpan = document.getElementById("temperature");
         let humiditySpan = document.getElementById("humidity");
+        let heatIndexSpan = document.getElementById("heat-index");
 
         fetch(baseUrl + "/dht")
           .then((response) => response.json())
           .then((response) => {
             let temperature = response.temperature;
             let humidity = response.humidity;
+            let heatIndex = response.heat_index;
 
             temperatureSpan.innerHTML = temperature;
             humiditySpan.innerHTML = humidity;
+            heatIndexSpan.innerHTML = heatIndex;
 
             if (temperature > 20 || temperature < 28) {
               temperatureSpan.className = "text-success";
