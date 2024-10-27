@@ -107,7 +107,7 @@
       baseUrl = window.location.href + "/api";
 
       const gpio = (action, pin) => {
-        fetch(baseUrl + "/gpio/" + action + "/" + pin)
+        fetch(baseUrl + "/gpio/" + action + "/" + pin, { method: "PUT" })
           .then((response) => response.json())
           .then((response) => {
             console.log(response);
