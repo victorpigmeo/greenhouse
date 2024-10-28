@@ -53,6 +53,7 @@
               </div>
 
               <input
+                id="password"
                 type="password"
                 class="form-control"
                 placeholder="Password"
@@ -104,10 +105,15 @@
     </div>
 
     <script>
-      baseUrl = window.location.href + "/api";
+      const baseUrl = window.location.href.split("/")[0] + "/api";
 
       const gpio = (action, pin) => {
-        fetch(baseUrl + "/gpio/" + action + "/" + pin, { method: "PUT" })
+        fetch(baseUrl + "/gpio/" + action + "/" + pin, {
+          method: "PUT",
+          headers: {
+            Authentication: document.getElementById("password").value,
+          },
+        })
           .then((response) => response.json())
           .then((response) => {
             console.log(response);
@@ -133,13 +139,13 @@
             humiditySpan.innerHTML = humidity;
             heatIndexSpan.innerHTML = heatIndex;
 
-            if (temperature > 20 || temperature < 28) {
+            if (temperature > 20 && temperature < 28) {
               temperatureSpan.className = "text-success";
             } else {
               temperatureSpan.className = "text-danger";
             }
 
-            if (humidity > 40 || humidity < 70) {
+            if (humidity > 40 && humidity < 70) {
               humiditySpan.className = "text-success";
             } else {
               humiditySpan.className = "text-danger";

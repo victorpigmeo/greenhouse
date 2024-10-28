@@ -1,5 +1,6 @@
 package models
 
 type Config struct {
-	AdminPassword string
+	AdminPassword  string
+	UnlockPassword string
 }
