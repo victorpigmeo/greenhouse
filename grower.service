@@ -1,0 +1,14 @@
+[Unit]
+Description=Start the grower
+After=graphical.target
+After=nerwork-online.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+User=victor
+WorkingDirectory=/home/victor
+ExecStart=/home/victor/greenhouse/start.sh
+
+[Install]
+WantedBy=multi-user.target

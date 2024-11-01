@@ -1,26 +1,29 @@
-#!/usr/bin/env sh
+#!/bin/bash
+
+#u8
+sleep 10
 
 # Activate python venv
 source /home/victor/myvenv/bin/activate
 
 cd /home/victor/mjpeg-proxy
 
-go run . &
+/usr/local/go/bin/go run . &
 
 disown %1
 
 cd
 
-cam2ip --height 750 --width 950 &
+/home/victor/go/bin/cam2ip --height 750 --width 950 &
 
 disown %1
 
 cd /home/victor/greenhouse
 
-go run . &
+/usr/local/go/bin/go run . &
 
 disown %1
 
-ngrok start --all > /dev/null &
+/usr/local/bin/ngrok start --all > /dev/null &
 
 disown %1
