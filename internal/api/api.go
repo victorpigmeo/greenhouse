@@ -119,6 +119,8 @@ func gpio(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	slog.Info(fmt.Sprintf(`%s %s`, r.Method, string(r.URL.Path)))
+
 	file, err := os.Open("./config.json")
 	defer file.Close()
 
