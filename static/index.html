@@ -86,13 +86,17 @@
             <button class="btn btn-success">
               <i class="bi-camera"></i>
             </button>
-            <button class="btn btn-success" onclick="gpio('set', 13)">
+            <button
+              id="led"
+              class="btn btn-success"
+              onclick="gpio('set', 13, 0)"
+            >
               <i class="bi-sunrise"></i>
             </button>
             <button class="btn btn-success" onclick="gpio('set', 22)">
               <i class="bi-droplet-half"></i>
             </button>
-            <button class="btn btn-success" onclick="gpio('button', 12)">
+            <button class="btn btn-success" onclick="gpio('button', 12, '')">
               <i class="bi-fan"></i>
             </button>
           </div>
@@ -107,8 +111,8 @@
     <script>
       const baseUrl = window.location.href.split("/")[0] + "/api";
 
-      const gpio = (action, pin) => {
-        fetch(baseUrl + "/gpio/" + action + "/" + pin, {
+      const gpio = (action, pin, value) => {
+        fetch(baseUrl + "/gpio/" + action + "/" + pin + "/" + value, {
           method: "PUT",
           headers: {
             Authentication: document.getElementById("password").value,
@@ -116,6 +120,16 @@
         })
           .then((response) => response.json())
           .then((response) => {
+            if (value == 0 && pin == 13) {
+              document
+                .getElementById("led")
+                .setAttribute("onclick", "gpio('set', 13, 1)");
+            } else {
+              document
+                .getElementById("led")
+                .setAttribute("onclick", "gpio('set', 13, 0)");
+            }
+
             console.log(response);
           })
           .catch((error) => {
