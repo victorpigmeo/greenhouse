@@ -6,6 +6,7 @@ need to create a config file like this
 
 ``` json
 {
-    "AdminPassword": "262817"
+    "AdminPassword": "<admin-password>",
+    "UnlockPassword": "<unlock-password>"
 }
 ```

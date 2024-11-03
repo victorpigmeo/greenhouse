@@ -112,7 +112,7 @@
       const baseUrl = window.location.href.split("/")[0] + "/api";
 
       const gpio = (action, pin, value) => {
-        fetch(baseUrl + "/gpio/" + action + "/" + pin + "/" + value, {
+        fetch(baseUrl + "/gpio/" + action + "/" + pin + "/" + value || "0", {
           method: "PUT",
           headers: {
             Authentication: document.getElementById("password").value,
