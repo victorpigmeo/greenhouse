@@ -93,7 +93,11 @@
             >
               <i class="bi-sunrise"></i>
             </button>
-            <button class="btn btn-success" onclick="gpio('set', 22)">
+            <button
+              id="water"
+              class="btn btn-success"
+              onclick="gpio('set', 15, 0)"
+            >
               <i class="bi-droplet-half"></i>
             </button>
             <button class="btn btn-success" onclick="gpio('button', 12, '0')">
@@ -128,6 +132,16 @@
               document
                 .getElementById("led")
                 .setAttribute("onclick", "gpio('set', 13, 0)");
+            }
+
+            if (value == 0 && pin == 15) {
+              document
+                .getElementById("water")
+                .setAttribute("onclick", "gpio('set', 15, 1)");
+            } else {
+              document
+                .getElementById("water")
+                .setAttribute("onclick", "gpio('set', 15, 0)");
             }
 
             console.log(response);
