@@ -23,3 +23,5 @@
 # m h  dom mon dow   command
 0 8 * * * curl 192.168.18.26:8080/api/gpio/set/13/0
 0 20 * * * curl 192.168.18.26:8080/api/gpio/set/13/1
+0 8 * * * curl 192.168.18.78:8080/api/gpio/set/13/0
+0 23 * * * curl 192.168.18.78:8080/api/gpio/set/13/1
